@@ -22,6 +22,9 @@ venv/
 .autoenv
 .env
 .envrc
+# IDEA 本地调试配置（含数据库密码，不提交）
+.run/
+.idea/
 # web/static
 
 deploy/license.txt

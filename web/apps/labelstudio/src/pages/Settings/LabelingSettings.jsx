@@ -1,16 +1,18 @@
 import { useCallback, useMemo, useState } from "react";
 import { useUpdatePageTitle, createTitleFromSegments } from "@humansignal/core";
+import { useAppTranslation } from "@humansignal/ui";
 import { useProject } from "../../providers/ProjectProvider";
 import { isEmptyString } from "../../utils/helpers";
 import { ConfigPage } from "../CreateProject/Config/Config";
 
 export const LabelingSettings = () => {
+  const [t] = useAppTranslation();
   const { project, updateProject } = useProject();
   const [config, setConfig] = useState("");
   const [essentialDataChanged, setEssentialDataChanged] = useState(false);
   const hasChanges = config !== project.label_config;
 
-  useUpdatePageTitle(createTitleFromSegments([project?.title, "Labeling Interface Settings"]));
+  useUpdatePageTitle(createTitleFromSegments([project?.title, t("settings.labelingInterfaceSettings")]));
 
   const saveConfig = useCallback(async () => {
     const res = await updateProject({
@@ -67,3 +69,4 @@ export const LabelingSettings = () => {
 
 LabelingSettings.title = "Labeling Interface";
 LabelingSettings.path = "/labeling";
+// (menu label rendered by SidebarMenu/Menu.Builder; page title above is translated)

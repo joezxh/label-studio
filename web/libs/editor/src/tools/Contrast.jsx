@@ -8,13 +8,15 @@ import ToolMixin from "../mixins/Tool";
 import { Tool } from "../components/Toolbar/Tool";
 import { Range } from "../common/Range/Range";
 import { IconContrastTool } from "@humansignal/icons";
+import { useAppTranslation } from "@humansignal/ui";
 
 const ToolView = observer(({ item }) => {
+  const [t] = useAppTranslation();
   return (
     <Tool
       active={item.selected}
       ariaLabel="contrast"
-      label="Contrast"
+      label={t("editor.tools.contrast")}
       controlsOnHover
       controls={[
         <Range

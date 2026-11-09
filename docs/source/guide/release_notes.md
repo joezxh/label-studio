@@ -12,15 +12,956 @@ meta_title: On-premises release notes for Label Studio Enterprise
 meta_description: Review new features, enhancements, and bug fixes for on-premises Label Studio Enterprise installations. 
 ---
 
-Before upgrading, review the steps outlined in [Upgrade Label Studio Enterprise](upgrade_enterprise) and ensure that you complete the recommended tests after each upgrade. 
+Before upgrading, review the steps outlined in [Upgrade Label Studio Enterprise](upgrade_enterprise) and ensure that you complete the recommended tests after each upgrade.
+
+!!! warning "Upgrading from 2.36.0"
+    Do not upgrade directly from 2.36.0 to 2.37.0 or 2.37.1. Those versions do not include the database migration repair added in [2.36.1](#2361md), and the upgrade fails with `django.db.migrations.exceptions.InconsistentMigrationHistory: Migration lse_projects.0049_ensure_custom_interface_columns is applied before its dependency`. Upgrade to 2.36.1 or a later 2.36.x release, or to [2.37.2](#2372md) or later. If you already upgraded from 2.36.0 to 2.37.0 or 2.37.1 and see this error, deploy 2.37.2 or later to repair your instance.
 
 !!! attention "Release support lifecycle"
     All releases from the last 12 months are supported: you can report bugs against them, and we fix those bugs in the current or an upcoming release, so you might need to upgrade to get a fix. Security patches are released only for the current minor release and the previous minor release. To keep receiving security fixes, stay on one of the two most recent minor releases. For help planning an upgrade, contact your HumanSignal representative.
 
-!!! note 
+!!! note
     The release notes for Label Studio Community Edition are available from the <a href="https://github.com/HumanSignal/label-studio/releases">Label Studio GitHub repository</a>.
 
 <div class="release-note"><button class="release-note-toggle"></button>
+<a name="2373md"></a>
+
+*Nov 05, 2026*
+
+## Label Studio Enterprise 2.37.3
+Helm Chart version: [2.0.13](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+
+**Security**
+
+- certifi 2026.2.25 → 2026.10.19: removes the emSign root CAs, whose intermediate CA keys were compromised.
+- The container image no longer includes the base image's system pip, which bundled outdated urllib3, msgpack, setuptools and its own older certifi.
+
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2372md"></a>
+
+## Label Studio Enterprise 2.37.2
+
+<div class="onprem-highlight">Fixed an upgrade-blocking database migration issue affecting instances on certain earlier versions</div>
+
+*Oct 20, 2026*
+
+Helm Chart version: [2.0.12](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+### Bug fixes
+
+- Fixed an issue where instances upgraded directly from 2.36.0 to 2.37.0 or 2.37.1 could fail with `django.db.migrations.exceptions.InconsistentMigrationHistory: Migration lse_projects.0049_ensure_custom_interface_columns is applied before its dependency`. This release includes the same database migration repair as [2.36.1](#2361md). Instances already on 2.37.0 or 2.37.1 are repaired when they upgrade to this version.
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2371md"></a>
+
+## Label Studio Enterprise 2.37.1
+
+<div class="onprem-highlight">Security fix removing a vulnerable dependency from the SDK, plus a related stability fix</div>
+
+*Oct 19, 2026*
+
+Helm Chart version: [2.0.12](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+!!! warning "Upgrading from 2.36.0"
+    If your instance is running 2.36.0, do not upgrade to this release. The upgrade fails with `django.db.migrations.exceptions.InconsistentMigrationHistory: Migration lse_projects.0049_ensure_custom_interface_columns is applied before its dependency`. Deploy [2.37.2](#2372md) or later instead.
+
+### Security
+
+- Removed a dependency in the SDK's data export functionality that was flagged by a high-severity security advisory. The affected functionality was not used and has been replaced with an internal implementation.
+
+### Bug fixes
+
+- Fixed an issue where dynamically generated code for converting JSON schemas into data models could fail to execute correctly.
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2370md"></a>
+
+## Label Studio Enterprise 2.37.0
+
+<div class="onprem-highlight">Interfaces in beta for every organization, plus View-Only seats and Members table filtering.</div>
+
+*Oct 15, 2026*
+
+Helm Chart version: [2.0.11](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+!!! warning "Upgrading from 2.36.0"
+    If your instance is running 2.36.0, do not upgrade to this release. The upgrade fails with `django.db.migrations.exceptions.InconsistentMigrationHistory: Migration lse_projects.0049_ensure_custom_interface_columns is applied before its dependency`. Deploy [2.37.2](#2372md) or later instead.
+
+### New features
+
+#### Interfaces is now in beta for everyone
+
+This release sharpens the Interfaces builder. Every tab shows which published version you are viewing, Data I/O displays enum values for labels, and you can test Submit validation in preview. Interfaces no longer sits behind a feature flag.
+
+Interfaces lets you build the labeling screen your task needs: define the inputs and outputs, lay out the UI, publish a version, and assign that version to as many projects as you like. It is the answer when the built-in tags cannot express the work.
+
+For more information, see [Interfaces](interfaces).
+
+![Screenshot](/images/releases/2-37-interfaces.png)
+
+!!! attention Availability
+    Interfaces is in beta. Self-hosted deployments are limited to the local development option, and the in-product agent and chat are not available on-premises.
+
+#### View-Only seats
+
+**View-Only seats** give read-only access to Analytics and Dashboards for projects and workspaces they're assigned to. A View-Only member can be upgraded to a full seat at any time.
+
+View-Only seat counts are driven by your license entitlements.
+
+
+#### Filter the Members table
+
+The Members table now supports persisted filters for role, seat type, tags, and last active date. A Membership column shows which projects someone is part of.
+
+![Screenshot](/images/releases/2-37-members-filters.png)
+
+#### Additional new features
+
+- Workspace selection menus show color-coded folder icons, and your own avatar for your personal sandbox.
+- Keyboard shortcuts can be overridden per project without changing your account-wide defaults.
+- The list of projects linked to an interface scrolls infinitely, and you can bulk-assign a published interface version to several linked projects at once.
+- Data Manager tasks can be filtered by **Reviewed at**, and filter and column options in the picker sort alphabetically.
+
+### Feature updates
+
+#### Members: Performance
+
+The Evaluation column and badges are now limited to annotator and reviewer roles. Wording moved to **Passing** and **Failing**, rejection rate is colored so that lower reads as better, and members who have left a project are flagged while their evaluation history is kept. **Select All** now prioritizes members who have performance data when more members match a filter than the display limit.
+
+#### Data Manager filters
+
+The Filters panel has clearer icons and spacing, and it handles locked tabs correctly: you can inspect Columns and Filters on a locked tab in read-only mode.
+
+### Security
+
+- Permission checks on project and model creation are stricter. Outbound requests and storage connections are protected against server-side request forgery, file serving blocks path traversal for local and exported files, and HTML and SVG sanitization is hardened. Self-hosted deployments get safer defaults for organization creation and for debug error pages.
+- Fixed an issue where a signed media link issued for one project could read uploaded files belonging to another project in the same organization.
+
+### Bug fixes
+
+- Fixed region rendering in the Interfaces builder and preview, including regions disappearing on video, audio, brush, and vector labeling interfaces, and relation lines not drawing on tall or scrolled screens.
+- Fixed Review stream and Quick View issues in interface-based projects where annotation data appeared blank, stale, or incorrectly reviewed after Fix and Accept, an undo, or navigation between annotations, and where comments on draft annotations were not saved until the task was reopened.
+- Fixed Data Manager filter issues, including incorrect "is empty" results, case sensitivity mismatches between parent and child filters, annotator result scoping, and runtime errors on unsupported fields or malformed regular expressions.
+- Fixed locking a Data Manager tab restoring agreement columns that had been hidden.
+- Fixed removing a workspace member reporting an error even though the removal succeeded, which left the Members table stale until a manual refresh.
+- Fixed inconsistent sizing of the Workspace dropdown and other selection fields depending on surrounding layout.
+- Fixed the "Duplication failed" badge appearing on projects that duplicated successfully.
+- Fixed DocLang document export omitting page images and skipping content from drafts, predictions, and task data.
+- Fixed a timeout when deleting a large number of task reviews or bulk-assigning tasks in large projects.
+- Fixed project task and review counts going out of sync after certain overlap, skip, or edit scenarios.
+- Fixed Managers submitting annotations beyond the configured task overlap limit, and restored their ability to submit new annotations from Quick View.
+- Fixed a hamburger menu button that stood out too much when active, inconsistent font sizing on mobile, and other polish issues in the header and account pages.
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2365md"></a>
+
+## Label Studio Enterprise 2.36.5
+
+<div class="onprem-highlight">Removed a vulnerable dependency from the SDK converter and fixed a related code generation issue</div>
+
+*Oct 19, 2026*
+
+Helm Chart version: [2.0.12](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+### Security
+
+- Removed the `nltk` dependency from the SDK's data converter to address a high-severity vulnerability in that package (see https://github.com/advisories/GHSA-8mgp-746c-j5xp). The tokenization logic used for CONLL2003 export is now maintained directly in Label Studio, with no change in behavior.
+
+### Bug fixes
+
+- Fixed an issue where dynamically generated Pydantic models from a JSON schema could fail because the generated module was not registered before being executed.
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2364md"></a>
+
+## Label Studio Enterprise 2.36.4
+
+<div class="onprem-highlight">Fixed an issue affecting API token blacklisting and activity logging</div>
+
+*Oct 09, 2026*
+
+Helm Chart version: [2.0.11](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+### Bug fixes
+
+- Fixed an issue where truncated API tokens were not recognized correctly, which could affect token blacklisting and activity logging.
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2363md"></a>
+
+## Label Studio Enterprise 2.36.3
+
+<div class="onprem-highlight">Fixed invalid OpenAPI schema export that blocked import into API management tools such as Azure APIM</div>
+
+*Sep 25, 2026*
+
+Helm Chart version: [2.0.8](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+### Bug fixes
+
+- Fixed an issue where the OpenAPI schema exported from the API documentation page was invalid and could not be imported into API management tools such as Azure API Management. Empty required-field lists and incorrectly nested response definitions in the exported schema have been corrected.
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2362md"></a>
+
+## Label Studio Enterprise 2.36.2
+
+<div class="onprem-highlight">Fixed support report OOM/inaccuracies on large activity logs; patched security vulnerabilities</div>
+
+*Sep 21, 2026*
+
+Helm Chart version: [2.0.8](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+### Security
+
+- Updated bundled anyio, cryptography, networking, and gRPC libraries to their latest patched releases.
+
+### Bug fixes
+
+- Fixed an issue where generating a support report on instances with large activity logs could exhaust worker memory and fail. This also corrected inaccurate session counts and concurrent session totals that could appear
+in generated reports.
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2361md"></a>
+
+## Label Studio Enterprise 2.36.1
+
+<div class="onprem-highlight">Fixed SCIM sync reporting and a database migration issue affecting project data on some on-premise instances.</div>
+
+*Sep 02, 2026*
+
+Helm Chart version: [2.0.7](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+### Bug fixes
+
+- Fixed an issue where SCIM group sync could report a successful response to the identity provider even when some users were only partially provisioned (for example, missing project membership), preventing automatic retry. Affected users are now omitted from the response so identity providers can retry and complete provisioning.
+- Fixed an issue where some on-premise instances could encounter database errors due to a background migration that recorded custom-interface project columns as applied without actually creating them. Upgrading to this version now automatically detects and repairs affected instances.
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2360md"></a>
+
+## Label Studio Enterprise 2.36.0
+
+<div class="onprem-highlight">New project dashboards, bulk Data Manager column edits, Interfaces sandboxes, and additional Data Manager filters.</div>
+
+*Aug 20, 2026*
+
+Helm Chart version: [2.0.7](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+!!! warning "Upgrade path"
+    When upgrading from this release, upgrade to [2.36.1](#2361md) or a later 2.36.x release, or to [2.37.2](#2372md) or later. Do not upgrade directly to 2.37.0 or 2.37.1.
+
+### New features
+
+#### Dashboards for projects
+
+The new project Dashboard tab gives managers, administrators, and owners a project-level view of how work is moving, where quality issues are appearing, and how members are performing.
+
+Open a project and select Dashboard to access the project dashboards:
+
+* Throughput: Track velocity, remaining work, and time spent.
+* Data quality: Analyze agreement, dimension-level quality, and label confusion.
+* Members: Review annotator, reviewer, and model performance within the project.
+
+For more information, see [Dashboards](dashboards).
+
+![Screenshot](/images/releases/2-36-dashboards-throughput.png)
+
+#### Add or update task data columns in bulk
+
+The **Add or Update Columns** Data Manager action is now available in the Data Manager. Add new fields to your task data or update existing values across many tasks at once, without re-importing your dataset.
+
+For more information, see [Use the Data Manager](manage_data).
+
+<img src="/images/releases/2-36-add-or-update-columns.png" style="width:66%; display:block; margin:0 auto;" alt="Screenshot">
+
+#### Host the Interfaces sandbox on your own domain
+
+On-premises deployments can now host the Interfaces sandbox on the same domain as Label Studio. Browser features that require a real origin, such as camera and microphone access, now work inside an Interface.
+
+!!! attention Availability
+    Custom Interfaces ships behind a feature flag. Contact your HumanSignal account team to turn it on for your workspace. For more information, see [Interfaces](interfaces).
+
+#### A vertical layout for the Annotations panel
+
+Reviewers can switch to a new [vertical Annotations panel layout](https://humansignal.com/changelog/#2026-07-21-vertical-annotations-sidebar), with filtering support, to compare annotations for a task without leaving Quick View.
+
+![Screenshot](/images/releases/2-36-vertical-annotation-sidebar.png)
+
+#### Additional new features
+
+- Managers and above can lock a Data Manager tab to prevent other users from changing its filters, columns, or view settings.
+- Grid view in the Data Manager supports selecting every displayed or filtered task at once, and right-click context menus are now available throughout the Data Manager and on the Organization/Project Members tables.
+- The Analytics KPI APIs have been updated and documented for use with the SDK.
+- Interface and template descriptions now render Markdown, including bold text, lists, inline code, and links.
+
+### Feature updates
+
+#### Improvements to Data Manager filters
+
+A number of enhancments have been made to Data Manager filters, allowing for more precise filtering of tasks:
+
+- New filters for annotation results, so you can see which tasks contain specific annotation labels. You can add multiple child filter lines and combine them with AND/OR logic.
+- Data Manager filters on Annotators, Reviewers, Comment authors, and similar user columns now support selecting multiple users.
+
+![Screenshot](/images/releases/2-36-improved-dm-filters.png) 
+
+### Security
+
+We continued hardening the platform behind the scenes: dependency security updates, bug fixes, and reliability improvements.
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2353md"></a>
+
+## Label Studio Enterprise 2.35.3
+
+<div class="onprem-highlight">Fixed a bug causing the project Members dashboard to fail when annotation authors had been deleted</div>
+
+*Sep 10, 2026*
+
+Helm Chart version: [2.0.8](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+### Bug fixes
+
+- Fixed an issue where the project Members dashboard returned an error on projects that had annotations from deleted users.
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2352md"></a>
+
+## Label Studio Enterprise 2.35.2
+
+<div class="onprem-highlight">Fixed duplicate text values when annotating OCR PDFs with OcrLabels</div>
+
+*Aug 20, 2026*
+
+Helm Chart version: [2.0.7](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+### Bug fixes
+
+- Fixed an issue where selecting text on OCR PDFs with OcrLabels could store duplicated text values instead of the selected value once.
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2351md"></a>
+
+*Aug 20, 2026*
+
+## Label Studio Enterprise 2.35.1
+Helm Chart version: [2.0.7](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+- Fixed the all-in-one Docker image failing to start due to a supervisord crash on startup.
+
+
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2350md"></a>
+
+## Label Studio Enterprise 2.35.0
+
+<div class="onprem-highlight">Custom Interfaces, service accounts, VideoVector autotracking with SAM2, agreement-based review sampling, and bulk review from the Data Manager. SAML SSO now requires a signed assertion (breaking change). </div>
+
+*Jul 29, 2026*
+
+Helm Chart version: [2.0.7](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+### New features
+
+#### Custom Interfaces: build labeling and evaluation interfaces without XML
+
+Complex labeling and evaluation projects often need layouts that the XML config can't express. Custom Interfaces lets you build those interfaces by describing the layout, controls, and outputs you want in plain language, with no XML to write. You can design for data modalities and interactions that go beyond the built-in tag library, then preview a design locally before you roll it out to your team.
+
+For more information, see [Interfaces](interfaces).
+
+![Screenshot](/images/interfaces/details.png)
+
+!!! attention Availability
+    Custom Interfaces ships behind a feature flag in 2.35. Contact your HumanSignal account team to turn it on for your workspace.
+
+#### Organization: manage API-only service accounts
+
+Give scripts and integrations their own credentials instead of routing them through a user's login. Service accounts get programmatic access to the Label Studio API, and can be scoped to an organization, workspace, or project level. Service accounts cannot sign in or interact with the platform through the UI.
+
+For more information, see [Service accounts](service-accounts).
+
+### Feature updates
+
+#### Video labeling: autotrack VideoVector regions with SAM2
+
+Tracking a moving object across a long video by hand is slow. You can now draw a `VideoVector` region on a single frame and let the SAM2 integration autotrack it across the remaining frames, so you annotate the motion once instead of frame by frame.
+
+For more information, see the [VideoVector](/tags/videovector) tag.
+
+![Screenshot](/images/releases/video-vector-sam2.png)
+
+#### Review and Data Manager: bulk actions and agreement-based sampling
+
+Move through large review queues faster and point reviewer attention at the tasks where annotators disagree.
+
+- Sample the review queue by inter-annotator agreement, so low-agreement tasks reach a reviewer first.
+- Accept or reject annotations in bulk from the Data Manager, with searchable dropdowns for choosing annotators.
+
+For more information, see [Review settings](#Review) and [Use the Data Manager](manage_data).
+
+#### Analytics: project Members moved under Dashboard
+
+The project **Members** page now lives under **Dashboard**, so per-project member management sits with the rest of a project's analytics instead of in a separate location.
+
+For more information, see the [Members dashboard](dashboard_members).
+
+#### Platform and reliability
+
+We continued hardening the platform behind the scenes: dependency security updates, bug fixes, and reliability improvements.
+
+### Security
+
+#### SAML SSO now requires a signed assertion (Breaking Change)
+
+Label Studio Enterprise now rejects SAML login responses that carry no valid signature on either the response or the assertion, closing a potential authentication-bypass vector. Identity providers that sign SAML by default (Okta, Microsoft Entra ID, Google Workspace, OneLogin, Ping, ADFS) are unaffected.
+
+!!! warning Temporary opt-out (not recommended)
+    Set `SAML_WANT_ASSERTIONS_OR_RESPONSE_SIGNED=0` to restore the prior behavior while you reconfigure your IdP.
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2346md"></a>
+
+## Label Studio Enterprise 2.34.6
+
+<div class="onprem-highlight">Fixed a Data Manager crash caused by stale hidden column IDs</div>
+
+*Jul 23, 2026*
+
+Helm Chart version: [2.0.7](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+### Bug fixes
+
+- Fixed an issue where the Data Manager could crash due to stale hidden column IDs.
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2345md"></a>
+
+## Label Studio Enterprise 2.34.5
+
+<div class="onprem-highlight">Fixed SCIM provisioning so deactivated and unmapped users no longer retain license seats</div>
+
+*Jul 23, 2026*
+
+Helm Chart version: [2.0.7](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+### Bug fixes
+
+- Fixed an issue where SCIM-provisioned users could continue to hold a license seat after their group mapping was removed or after they were deactivated and reactivated. Roles are now correctly released to the organization default when no active group mapping exists, and reactivating a user requires the role to be re-established through group sync.
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2344md"></a>
+
+## Label Studio Enterprise 2.34.4
+
+<div class="onprem-highlight">Bug fixes</div>
+
+*Jun 18, 2026*
+
+Helm Chart version: [2.0.5](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+### Bug fixes
+- Fixed an issue with env passthrough for SECURE_PROXY_SSL_HEADER — SAML/SP URLs behind TLS-terminating L7 gateways.
+- Fixed an issue with 404 responses for audio tasks in stored in S3
+
+
+
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2343md"></a>
+
+## Label Studio Enterprise 2.34.3
+
+<div class="onprem-highlight">Bug fixes</div>
+
+*Jun 02, 2026*
+
+
+Helm Chart version: [2.0.5](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+
+### Bug fixes
+- Fixed an issue with zoom seem when working with the brush tool and eraser tool. 
+- Fixed an issue with images disappearing with BrushLabels suggestions.
+
+
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2342md"></a>
+
+## Label Studio Enterprise 2.34.2
+
+<div class="onprem-highlight">Bug fixes for EntraID SCIM provisioning</div>
+
+*May 14, 2026*
+
+
+Helm Chart version: [2.0.5](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+### Bug fixes
+
+- Fixed multiple issues related to EntraID SCIM provisioning.  
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2341md"></a>
+
+## Label Studio Enterprise 2.34.1
+
+<div class="onprem-highlight">Bug fixes for SCIM and multi-page labeling</div>
+
+*May 11, 2026*
+
+
+Helm Chart version: [2.0.5](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+### Bug fixes
+
+- Fixed issues with SCIM provisioning for EntraID related to mapping attributes and group provisioning.
+- Fixed an issue with using the `valueList` parameter on the `<Image>` tag for multi-page labeling.
+
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2340md"></a>
+
+## Label Studio Enterprise 2.34.0   
+
+<div class="onprem-highlight">Consensus methodology, project states, new analytics dashboards, and more <br/><br/>
+
+!!! attention
+    This release requires you to run backfill scripts to ensure some updates are applied to earlier data. 
+
+</div>
+
+*Apr 30, 2026*
+
+Helm Chart version: [2.0.4](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+### New features
+
+#### Expanded and improved agreement calculation
+
+We have made multiple changes and improvements to agreements.
+
+!!! warning Backfill required
+    The updates for agreement will only apply to new projects and tasks as you create or update them. 
+
+    To ensure these updates are also applied to earlier data, you must run a backfill scripts: [**Agreement migration when upgrading to 2.34 or later**](https://support.humansignal.com/hc/en-us/articles/44936527813517-Agreement-migration-when-upgrading-to-2-34-or-later)
+
+    Also note that the changes to the **Agreement (Selected)** column will affect any Data Manager filters that you have created using that column
+    
+
+##### Introducing Consensus methodology
+
+You can now select between **Pairwise Averaging** and **Consensus** methodology when calculating agreement.
+
+Previously, all agreement calculations used Pairwise methodology.
+
+- Consensus methodology calculates the percentage of annotators who chose the most common answer.
+- Pairwise Averaging methodology calculates the average agreement between each pair of annotators.
+
+You can learn more about each type of methodology here: [**Methodology**](https://docs.humansignal.com/guide/stats#Methodology).
+
+![Screenshot](images/releases/2-34-agreement-1.avif)
+
+##### Configure agreement metrics for each control tag
+
+Under **Settings > Quality > Agreement Columns**, you can now select which metric you want to use for each individual control tag.
+
+**Before**:
+
+Previously, if you had multiple control tags in your labeling interface, you were limited to either the Exact Match metric or the Basic Matching metric, which would apply the default metric to each control tag.
+
+![Screenshot](images/releases/2-34-agreement-2.avif)
+
+**After:**
+
+Now you can select a [**built-in metric**](agreement_metrics) for each control tag.
+
+![Screenshot](images/releases/2-34-agreement-3.avif)
+
+##### Configure which classes should be included in agreement calculation by control tag
+
+You can also now decide which classes within each tag should be included when calculating agreement.
+
+Under **Settings > Quality > Agreement Columns**, control tags that have classes (e.g. Choices and Labels) lists each class next to a checkbox.
+
+You can deselect the checkbox to remove that class from the agreement calculation for that control tag. This also removes it from the overall agreement calculation for the task.
+
+![Screenshot](images/releases/2-34-agreement-4.avif)
+
+##### Set custom weights only at the tag level
+
+How weights are configured for agreement has changed.
+
+When you customize the weight for a control tag, you are deciding how much it should factor into the [**overall task agreement calculation**](https://docs.humansignal.com/guide/stats#Overall-agreement). This lets you de-emphasize tags that should carry less weight when deciding task agreement.
+
+**Before:**
+
+Previously, you could configure weight by control tag and classes within the control tag.
+
+![Screenshot](images/releases/2-34-agreement-5.avif)
+
+**After:**
+
+Now, you can only configure weight by control tag. (However, as mentioned above, you can remove classes from agreement calculation at the tag level instead.)
+
+![Screenshot](images/releases/2-34-agreement-6.avif)
+
+##### View agreement for each control tag
+
+The Data Manager now has columns for each control tag. This has replaced the **Agreement (Selected)** column.
+
+You can use the agreement columns to select which annotators and/or models to use in the agreement calculation.
+
+![Screenshot](images/releases/2-34-agreement-7.avif)
+
+![Screenshot](images/releases/2-34-agreement-8.avif)
+
+For more information, see [**Agreement columns**](https://docs.humansignal.com/guide/manage_data#Agreement-columns).
+
+##### Deprecated metrics
+
+The following agreement metrics for rectangles, brushes, and polygons have been removed:
+
+- **F1 score at specific IOU threshold**
+- **Recall at specific IOU threshold**
+- **Precision at specific IOU threshold**
+
+Any existing projects that use the agreement metrics listed above automatically updated to use standard IoU calculation.
+
+##### Additional resources
+
+[**Task agreement documentation**](stats)
+
+[**Manage Quality at Scale with Super-granular Agreement**](https://humansignal.com/blog/manage-quality-at-scale-with-super-granular-agreement/)
+
+[**Video - Understanding Agreement Metrics with Thresholds**](https://www.youtube.com/watch?v=j5xsZQHQ_s0)
+
+[**Video - Understanding Agreement | Consensus vs. Pairwise**](https://www.youtube.com/watch?v=ivT4UN5LzFw)  
+
+#### Project and task states
+
+Project and tasks will have states depending on the actions you have taken on them and where they are in the workflow.
+
+State management is currently being rolled out so that we can backfill tasks and projects created before this feature was implemented. If you do not see it yet, you will in the coming days.
+
+For more information, see [Project and task states](project_states).
+
+!!! warning Backfill required
+    The updates for project and task states will only apply to new projects and tasks as you create or update them. 
+
+    To ensure these updates are also applied to earlier data, you must run a backfill script: [**Project and task state migration when upgrading to 2.34 or later**](https://support.humansignal.com/hc/en-us/articles/44907795136909-Project-and-task-state-migration-when-upgrading-to-2-34-or-later)
+
+![Screenshot](images/releases/2-34-fsm-1.avif)
+
+![Screenshot](images/releases/2-34-fsm-2.avif)
+
+
+#### Overview dashboard
+
+There is a new **Analytics > Overview** page that provides insight into metrics and progress across multiple projects and workspaces.
+
+For more information, see [**Projects overview dashboard**](dashboard_overview).
+
+![Screenshot](images/releases/2-34-project-overview-1.avif)
+
+![Screenshot](images/releases/2-34-project-overview-2.avif)
+
+#### Label distribution dashboard
+
+There is a new **Analytics > Label Distribution** dashboard that provides insight into how labels are distributed within a project.
+
+For more information, see [**Label Distribution dashboard**](dashboard_distribution).
+
+![Screenshot](images/releases/2-34-label-dist.avif)
+
+
+#### Tag organization members
+
+You can now add metadata tags to organization members. This can be useful if you need to keep track of member location, language, or other attributes.
+
+You will now see:
+
+- A new **Tags** column in the organization **Members** table, which you can use to view and apply tags.
+- A new **Tag Members** button on the **Organization** page, which you can use to import a CSV file to bulk create and apply tags.
+- A new **Organization > Settings > Member Tags** page where you can manually create tags or delete tags.
+
+For more information, see [**Tag members**](https://docs.humansignal.com/guide/admin_manage_lse#Tag-members).
+
+![Screenshot](images/releases/2-34-tag.avif)
+
+#### Service account impersonation for GKE deployments
+
+When setting up cloud storage for a project, you will now see an option to use service account impersonation for GKE deployments.
+
+For more information, see [Service account impersonation for GKE deployments](https://docs.humansignal.com/guide/storage_gcp#Google-Cloud-Storage-with-service-account-impersonation-for-GKE).
+
+![Screenshot](images/releases/2-34-gcp-sa.png)
+
+
+### Feature updates
+
+#### PDF labeling enhancements
+
+##### Per-page classification
+
+If you are using a tag that supports the `perItem="true"` parameter (for example, [**Choices**](/tags/choices), [**Rating**](/tags/rating), [**Taxonomy**](/tags/taxonomy), [**Number**](/tags/number), [**TextArea**](/tags/textarea)), you can now apply those annotations to individual PDF pages.
+
+<video style="max-width: 600px;" class="gif-border" autoplay loop muted>
+    <source src="/images/releases/2-34-page-classification.mp4">
+</video>
+
+##### Page thumbnails
+
+You can now view thumbnails for each page. These thumbnails will also provide information about any page-level annotations.
+
+![Screenshot](images/releases/2-34-pdf-thumbnails.avif)
+
+<video style="max-width: 600px;" class="gif-border" autoplay loop muted>
+    <source src="/images/releases/2-34-pdf-thumbnails.mp4">
+</video>
+
+#### Data Manager filter enhancements
+
+Data Manager filters have the following enhancements:
+
+- New copy and paste actions that you can use to copy filters between tabs within the same project or to tabs within other projects (any inapplicable fields will be automatically removed when pasting between projects).
+- The ability to copy filters as JSON so that you can edit them elsewhere.
+- The three most recent filter selections will appear at the top of the drop-down menu.
+- When adding new filters, it will pre-populate with your most recent selections.
+
+![Screenshot](images/releases/2-34-dm-filter-1.avif)
+
+![Screenshot](images/releases/2-34-dm-filter-2.avif)
+
+#### Context menu for Data Manager rows
+
+When you right-click a Data Manager row, you will now see a context menu:
+
+![Screenshot](images/releases/2-34-context-menu.avif)
+
+#### Save analytic dashboard views
+
+When viewing the Overview and Member Performance dashboards, you can now save your filters as a view.
+
+For more information, see [**Save views**](#Save-views).
+
+![Screenshot](images/releases/2-34-save-views.avif)
+
+#### SSO/SCIM enhancements
+
+The SSO/SCIM settings are now located under Organization > Settings > SSO & SCIM.
+
+These settings have also been improved to use a more guided setup process with automatic XML/URL metadata field mapping.
+
+![Screenshot](images/releases/2-34-sso-scim.avif)
+
+#### Configure ReactCode permissions
+
+Administrators can now configure ReactCode permissions from **Organization > Usage & License**.
+
+From here you can configure whether to enable ReactCode or whether to restrict it so that it is only allowed in [**external app mode**](#External-app-mode-src).
+
+You can also configure allowed origins and which browser features that iframes can access.
+
+#### Disable exports for Administrators and Managers
+
+There is a new environment variable you can set to disable the **Export** button in the Data Manager for Administrators and/or Managers:
+
+```
+DISABLE_EXPORT_FOR=AD,MA
+```
+#### Google Cloud Platform support for custom agreement metrics
+
+You can now use custom agreement metrics on the Google Cloud Platform. For more information, see [Custom agreement metrics](custom_metric).
+
+#### CLI for the Label Studio SDK
+
+We have added a CLI for the Label Studio SDK to help you manage your projects and tasks. For more information, see [CLI for the Label Studio SDK](https://github.com/HumanSignal/label-studio-sdk/blob/master/README.md#cli).
+
+#### Additional feature updates and UX enhancements
+
+- When creating a project, the Cloud Storage option is more visible. 
+- When viewing projects in list view, you will now also see the project ID. The project description has been moved below the project title.
+- When viewing the [Member Performance dashboard](dashboard_annotator), Managers will now only be able to see users who are members of projects or workspaces in which the Manager is also a member. Previously, Managers could see the full organization user list, but could only see user metrics for projects in which the Manager was also a member.
+- A new [custom permission](admin_permissions) is available to control who can access the [Members dashboard](dashboard_members) for a project: **Access Project Members Dashboard**
+
+
+### Performance improvements
+
+**Performance improvements for image loading**
+
+Added staggered requests to improve performance when loading a large number of images from source storage.
+
+**Performance improvements for task switching**
+
+Improved performance when clicking between different tasks in the Data Manager to open the Quick View interface.
+
+### Backfill migrations
+
+The updates for agreement and project states will only apply to new projects and tasks as you create or update them. 
+
+To ensure these updates are also applied to earlier data, you must run backfill scripts. 
+
+For more information, see:
+
+* [Agreement migration when upgrading to 2.34 or later](https://support.humansignal.com/hc/en-us/articles/44936527813517-Agreement-migration-when-upgrading-to-2-34-or-later)
+
+* [Project and task state migration when upgrading to 2.34 or later](https://support.humansignal.com/hc/en-us/articles/44907795136909-Project-and-task-state-migration-when-upgrading-to-2-34-or-later)
+
+### Security
+
+Fixed several security vulnerabilities in Python dependencies.
+
+### Bug fixes
+
+- Fixed several issues with `BrushLabels`. 
+- Fixed several issues related to using the **Compare All** view for annotations.
+- Fixed an issue where the `HyperText` tag with `valueType=url` did not presign URLs within loaded HTML content.
+- Fixed an issue with annotators being able to see the page for importing project data, even though they were still blocked from importing data.
+- Fixed an issue where long workspace names would cause certain searches and lists to behave unexpectedly.
+- Fixed an issue with the Timeline frame indicator and row highlighting in Dark Mode.
+- Fixed an issue with the review status icon not appearing on annotation tabs.
+- Fixed an issue with duplicate account creation via SSO/SCIM when email addresses used different capitalization.
+- Fixed an issue with pending users appearing in Analytics member filter.
+- Fixed an issue with Admins being able to configure org-wide email settings, even though this should be restricted to Owners.
+- Fixed an issue where users could not always select projects when creating a new Prompt.
+- Fixed an issue with a runtime error triggered when changing a user's role in the organization settings. 
+- Fixed an issue where if filtering for roles on the Organization page, there would be some situations where clearing the filters would not reset the view.
+- Fixed an issue with some UI elements that would say "annotation ID" instead of "prediction ID," even if referring to a prediction.
+- Fixed an issue with the **Delete Annotations** action raising a runtime error.
+- Fixed an issue where annotations and regions would disappear when accepting a task as part of the reviewer workflow.
+- Fixed an issue where Managers were unable to assign users to projects that they created.
+- Fixed an issue with the **Last Activity** column on the organization page not working correctly.
+- Fixed an issue where the View Activity Logs option was displayed for Pending members.
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
+<a name="2332md"></a>
+
+## Label Studio Enterprise 2.33.2
+
+<div class="onprem-highlight">Updates for SSO/SCIM, control ReactCode availability</div>
+
+*Mar 18, 2026*
+
+
+Helm Chart version: [2.0.1](https://github.com/HumanSignal/charts/blob/master/heartex/label-studio/Chart.yaml)
+
+### Feature updates
+
+#### Enhanced SSO/SCIM user interface
+
+The SSO/SCIM settings are now located under **Organization > Settings > SSO & SCIM**. 
+
+These settings have also been improved to use a more guided setup process with automatic XML/URL metadata field mapping. 
+
+![Screenshot](/images/releases/2-33-2-scim.png)
+
+#### Disable ReactCode for your organization
+
+There is a new **Organization > Settings > ReactCode** page that allows admins to disable [ReactCode](/tags/reactcode) labeling interfaces across their organization. 
+
+#### New custom permission for the Members dashboard
+
+A new [custom permission](admin_permissions) is available to control who can access the [Members dashboard](dashboard_members) for a project: **Access Project Members Dashboard**.
+
+### Bug fixes
+
+Fixed multiple issues related to SSO/SAML and SCIM setup, provisioning, and mapping. 
+
+
+
+
+
+
+
+
+</div><div class="release-note"><button class="release-note-toggle"></button>
 <a name="2331md"></a>
 
 ## Label Studio Enterprise 2.33.1

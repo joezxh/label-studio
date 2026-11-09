@@ -1,4 +1,5 @@
 import { getRoot, getSnapshot, types } from "mobx-state-tree";
+import { i18nInstance } from "@humansignal/ui";
 import { cellViewFor } from "./cell_view";
 import { getColumnIconByAlias } from "../../utils/columnIcons";
 import { all } from "../../utils/utils";
@@ -59,7 +60,24 @@ const typeNameMap = {
   Submission: "Submission",
 };
 
-export const ViewColumnTypeName = (type) => typeNameMap[type] || "String";
+const typeNameKeyMap = {
+  String: "string",
+  Number: "number",
+  Boolean: "boolean",
+  Datetime: "dateTime",
+  Image: "image",
+  Audio: "audio",
+  AudioPlus: "audio",
+  Video: "video",
+  Text: "text",
+  HyperText: "hyperText",
+  TimeSeries: "timeSeries",
+  Time: "time",
+  Submission: "submission",
+};
+
+export const ViewColumnTypeName = (type) =>
+  i18nInstance.t(`dm.columnTypes.${typeNameKeyMap[type] ?? "string"}`, { defaultValue: typeNameMap[type] ?? "String" });
 
 export const TabColumn = types
   .model("ViewColumn", {

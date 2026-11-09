@@ -20,6 +20,7 @@ import { IconContext } from "@humansignal/icons";
 import { JotaiProvider, JotaiStore } from "../utils/jotai-store";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@humansignal/core/lib/utils/query-client";
+import { LanguageProvider } from "@humansignal/ui";
 import { RootPage } from "./RootPage";
 import { ff } from "@humansignal/core";
 import "@humansignal/ui/src/tailwind.css";
@@ -61,6 +62,7 @@ const App = ({ content }) => {
     <IconContext.Provider value={{ size: 24, weight: "regular" }}>
       <ErrorBoundary>
         <Router history={browserHistory}>
+          <LanguageProvider>
           <MultiProvider
             providers={[
               <QueryClientProvider client={queryClient} key="query" />,
@@ -81,6 +83,7 @@ const App = ({ content }) => {
               <ToastViewport />
             </AsyncPage>
           </MultiProvider>
+          </LanguageProvider>
         </Router>
       </ErrorBoundary>
     </IconContext.Provider>

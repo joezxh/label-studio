@@ -12,7 +12,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { ViewColumnType, ViewColumnTypeName, ViewColumnTypeShort } from "../../../../stores/Tabs/tab_column";
-import { Button, Dropdown, Tooltip } from "@humansignal/ui";
+import { Button, Dropdown, Tooltip, useAppTranslation, i18nInstance } from "@humansignal/ui";
 import { Menu } from "../../Menu/Menu";
 import { Resizer } from "../../Resizer/Resizer";
 import { Space } from "../../Space/Space";
@@ -34,6 +34,7 @@ import { isStarterCloudPlan } from "@humansignal/core";
 const tableHeadCN = cn("table-head");
 
 const DropdownWrapper = observer(({ column, cellViews, children, onChange, disabled, disabledTooltip }) => {
+  const [t] = useAppTranslation();
   const types = ViewColumnType._types
     .map((t) => t.value)
     .filter((t) => {
@@ -58,7 +59,7 @@ const DropdownWrapper = observer(({ column, cellViews, children, onChange, disab
   return (
     <Dropdown.Trigger
       content={
-        <Menu title="Display as" size="compact" selectedKeys={[column.currentType]}>
+        <Menu title={t("dm.displayAs")} size="compact" selectedKeys={[column.currentType]}>
           {types.map((type) => {
             return (
               <Menu.Item key={type} onClick={() => onChange?.(column, type)}>
@@ -272,7 +273,7 @@ const DRAGGING_ATTRIBUTE = "data-column-dragging";
 const SCREEN_READER_INSTRUCTIONS =
   "To reorder this column, press space or enter. While reordering, use the left and right arrow keys to move it, then press space or enter to drop it, or escape to cancel.";
 
-const getColumnLabel = (column) => (typeof column?.title === "string" && column.title ? column.title : "column");
+const getColumnLabel = (column) => (typeof column?.title === "string" && column.title ? column.title : i18nInstance.t("dm.column", { defaultValue: "column" }));
 
 // Position of a keyboard drag, in viewport coordinates. There is no pointer, so the centre of the moved column (its
 // cell, which stays in place while dragging) plus the drag delta is used instead.
@@ -285,6 +286,7 @@ const getDragPointer = ({ delta }, cell) => {
 // One header cell. The whole cell starts a pointer drag (after a few px of movement, so clicks and the column menu
 // still work); the grip button is the keyboard activator (space/enter, then arrows).
 const DraggableHeaderCell = ({ columnId, label, disabled, isGhost, cellRefs, children }) => {
+  const [t] = useAppTranslation();
   const { attributes, listeners, setNodeRef, setActivatorNodeRef } = useDraggable({ id: columnId, disabled });
   const setRefs = useCallback(
     (element) => {
@@ -314,7 +316,7 @@ const DraggableHeaderCell = ({ columnId, label, disabled, isGhost, cellRefs, chi
           {...attributes}
           onKeyDown={listeners?.onKeyDown}
           data-testid="column-drag-handle"
-          aria-label={`Reorder column ${label}`}
+          aria-label={t("dm.reorderColumn", { label })}
           className={tableHeadCN.elem("drag-handle").toClassName()}
         >
           <DotsSixVerticalIcon aria-hidden="true" />
@@ -343,6 +345,7 @@ export const TableHead = observer(
       ref,
     ) => {
       const { columns, headerRenderers, cellViews } = React.useContext(TableContext);
+      const [t] = useAppTranslation();
       const states = useLocalStore(() => ({
         orderedColumns: {},
         setOrderedColumns(updatedColumns) {
@@ -610,7 +613,7 @@ export const TableHead = observer(
         let lastAnnounced = null;
 
         return {
-          screenReaderInstructions: { draggable: SCREEN_READER_INSTRUCTIONS },
+          screenReaderInstructions: { draggable: t("dm.columnReorderInstructions", { defaultValue: SCREEN_READER_INSTRUCTIONS }) },
           announcements: {
             onDragStart: ({ active }) => {
               lastAnnounced = indexOf(active.id);

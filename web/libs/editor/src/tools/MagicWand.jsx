@@ -12,6 +12,7 @@ import { drawMask } from "../utils/magic-wand";
 import { guidGenerator } from "../core/Helpers";
 import { IconMagicWandTool } from "@humansignal/icons";
 import { Tool } from "../components/Toolbar/Tool";
+import { useAppTranslation } from "@humansignal/ui";
 
 /**
  * Technical Overview:
@@ -66,9 +67,10 @@ import { Tool } from "../components/Toolbar/Tool";
  */
 
 const ToolView = observer(({ item }) => {
+  const [t] = useAppTranslation();
   return (
     <Tool
-      label="Magic Wand"
+      label={t("editor.tools.magicWand")}
       ariaLabel="magicwand"
       shortcut="tool:magic-wand"
       active={item.selected}

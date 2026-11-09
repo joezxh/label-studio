@@ -1,7 +1,7 @@
 import React from "react";
 import { inject } from "mobx-react";
 import { cn } from "../../utils/bem";
-import { Button, Message } from "@humansignal/ui";
+import { Button, Message, useAppTranslation } from "@humansignal/ui";
 import { FilterLine, FILTER_CHROME_ICON_SIZE } from "./FilterLine/FilterLine";
 import {
   ArrowCounterClockwiseIcon,
@@ -22,6 +22,7 @@ const injector = inject(({ store }) => ({
 }));
 
 export const Filters = injector(({ store, views, currentView, filters, projectId }) => {
+  const [t] = useAppTranslation();
   const { sidebarEnabled } = views;
   const isLocked = currentView?.isLockedByManager;
   const lockedTooltip = currentView?.lockedUpdateMessage;
@@ -57,7 +58,7 @@ export const Filters = injector(({ store, views, currentView, filters, projectId
     try {
       text = await navigator.clipboard.readText();
     } catch {
-      showToast("Cannot read clipboard. Please allow clipboard access and try again.");
+      showToast(t("dm.filters.clipboardReadError"));
       return;
     }
 
@@ -65,12 +66,12 @@ export const Filters = injector(({ store, views, currentView, filters, projectId
     try {
       snapshot = JSON.parse(text);
     } catch {
-      showToast("Clipboard does not contain valid JSON.");
+      showToast(t("dm.filters.clipboardInvalidJson"));
       return;
     }
 
     if (!snapshot || typeof snapshot !== "object" || !Array.isArray(snapshot.items)) {
-      showToast('Invalid filter format. Expected { "conjunction": "and"|"or", "items": [...] }');
+      showToast(t("dm.filters.invalidFormat"));
       return;
     }
 
@@ -78,14 +79,14 @@ export const Filters = injector(({ store, views, currentView, filters, projectId
 
     const result = currentView.importFilters(snapshot);
     if (result === false) {
-      showToast("No matching filter columns found in this project. Filters may be from a different project.");
+      showToast(t("dm.filters.noMatchingColumns"));
       return;
     }
 
     setPrePasteSnapshot(beforePaste);
     setPasteFeedback(true);
     setTimeout(() => setPasteFeedback(false), 1500);
-  }, [currentView, showToast]);
+  }, [currentView, showToast, t]);
 
   const handleUndoPaste = React.useCallback(() => {
     if (!prePasteSnapshot) return;
@@ -117,7 +118,7 @@ export const Filters = injector(({ store, views, currentView, filters, projectId
             />
           ))
         ) : (
-          <div className={cn("filters").elem("empty").toClassName()}>No filters applied</div>
+          <div className={cn("filters").elem("empty").toClassName()}>{t("dm.filters.noFiltersApplied")}</div>
         )}
       </div>
       <div className={cn("filters").elem("actions").toClassName()}>
@@ -131,7 +132,7 @@ export const Filters = injector(({ store, views, currentView, filters, projectId
           className="p-tighter [&_em]:size-500"
           leading={<PlusIcon size={FILTER_CHROME_ICON_SIZE} className="shrink-0" aria-hidden="true" />}
         >
-          Add {filters.length ? "Another Filter" : "Filter"}
+          {filters.length ? t("dm.filters.addAnotherFilter") : t("dm.filters.addFilter")}
         </Button>
 
         <div className={cn("filters").elem("actions-right").toClassName()}>
@@ -139,9 +140,9 @@ export const Filters = injector(({ store, views, currentView, filters, projectId
             <Button
               size="small"
               look="string"
-              tooltip={copyFeedback ? "Copied!" : "Copy filters as JSON (SDK)"}
+              tooltip={copyFeedback ? t("dm.filters.copied") : t("dm.filters.copyAsJson")}
               onClick={handleCopyFilters}
-              aria-label="Copy filters as JSON for SDK"
+              aria-label={t("dm.filters.copyAsJson")}
               leading={<CopySimpleIcon size={FILTER_CHROME_ICON_SIZE} aria-hidden="true" />}
               data-testid="filters-copy"
             />
@@ -151,9 +152,9 @@ export const Filters = injector(({ store, views, currentView, filters, projectId
             size="small"
             look="string"
             disabled={isLocked}
-            tooltip={isLocked ? lockedTooltip : pasteFeedback ? "Pasted!" : "Paste filters from JSON"}
+            tooltip={isLocked ? lockedTooltip : pasteFeedback ? t("dm.filters.pasted") : t("dm.filters.pasteFromJson")}
             onClick={handlePasteFilters}
-            aria-label="Paste filters from JSON"
+            aria-label={t("dm.filters.pasteFromJson")}
             leading={<ClipboardTextIcon size={FILTER_CHROME_ICON_SIZE} aria-hidden="true" />}
             data-testid="filters-paste"
           />
@@ -163,9 +164,9 @@ export const Filters = injector(({ store, views, currentView, filters, projectId
               size="small"
               look="string"
               disabled={isLocked}
-              tooltip={isLocked ? lockedTooltip : "Undo paste — restore previous filters"}
+              tooltip={isLocked ? lockedTooltip : t("dm.filters.undoPaste")}
               onClick={handleUndoPaste}
-              aria-label="Undo paste"
+              aria-label={t("dm.filters.undoPaste")}
               leading={<ArrowCounterClockwiseIcon size={FILTER_CHROME_ICON_SIZE} aria-hidden="true" />}
               data-testid="filters-undo-paste"
             />
@@ -175,9 +176,9 @@ export const Filters = injector(({ store, views, currentView, filters, projectId
             <Button
               look="string"
               size="small"
-              tooltip="Pin filters to sidebar"
+              tooltip={t("dm.filters.pinToSidebar")}
               onClick={() => views.expandFilters()}
-              aria-label="Pin filters to sidebar"
+              aria-label={t("dm.filters.pinToSidebar")}
               leading={<SidebarSimpleIcon size={FILTER_CHROME_ICON_SIZE} className="rotate-180" aria-hidden="true" />}
               data-testid="filters-pin-sidebar"
             />

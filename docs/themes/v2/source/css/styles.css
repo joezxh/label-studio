@@ -3088,3 +3088,37 @@ p .badge::after {
   vertical-align: middle;
   padding-top: 5px;
 }
+
+/* Language switcher (EN / 中) */
+.LanguageSwitcher {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 12px;
+  border: 1px solid var(--border, #d9d9d9);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.LanguageSwitcher-button {
+  border: none;
+  background: transparent;
+  color: var(--text, #1f1f1f);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.LanguageSwitcher-button + .LanguageSwitcher-button {
+  border-left: 1px solid var(--border, #d9d9d9);
+}
+
+.LanguageSwitcher-button:hover {
+  background: var(--surface-hover, rgba(0, 0, 0, 0.04));
+}
+
+.LanguageSwitcher-button.active {
+  background: var(--primary, #2a6df4);
+  color: #fff;
+}

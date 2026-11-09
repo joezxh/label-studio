@@ -1,4 +1,6 @@
 export * from "./lib/Card/Card";
+export * from "./lib/LanguageSwitcher/LanguageSwitcher";
+export * from "./i18n";
 export * from "./lib/InputFile/InputFile";
 export * from "./lib/MultiStateToggle/MultiStateToggle";
 export * from "./lib/ThemeToggle/ThemeToggle";

@@ -1,0 +1,79 @@
+.languageSwitcher {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 1px solid var(--color-neutral-border, #d9d9d9);
+  background: transparent;
+  color: var(--color-neutral-content, #1f1f1f);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.trigger:hover {
+  background: var(--color-neutral-surface-hover, rgba(0, 0, 0, 0.04));
+  border-color: var(--color-neutral-border-bold, #bfbfbf);
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.label {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 1000;
+  min-width: 160px;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--color-neutral-surface, #ffffff);
+  border: 1px solid var(--color-neutral-border, #d9d9d9);
+  border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-neutral-content, #1f1f1f);
+  cursor: pointer;
+  font-size: 13px;
+  text-align: left;
+}
+
+.item:hover {
+  background: var(--color-neutral-surface-hover, rgba(0, 0, 0, 0.04));
+}
+
+.itemActive {
+  font-weight: 600;
+  color: var(--color-primary-content, #2a6df4);
+}
+
+.check {
+  margin-left: 8px;
+}

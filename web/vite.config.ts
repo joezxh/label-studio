@@ -43,6 +43,62 @@ function enforceGlobalCssOrderPlugin(): import("vite").Plugin {
   };
 }
 
+// Dev-only: inject window.APP_SETTINGS into the SPA entry so the standalone Vite
+// dev server can boot without the Django backend rendering base.html (which is what
+// normally provides APP_SETTINGS). Production builds don't use this — Django injects it.
+function injectAppSettings(): import("vite").Plugin {
+  return {
+    name: "inject-app-settings",
+    transformIndexHtml(html) {
+      const settings = {
+        user: {
+          id: null,
+          username: "",
+          firstName: "",
+          lastName: "",
+          initials: "",
+          email: "",
+          customHotkeys: {},
+          allow_newsletters: null,
+        },
+        lookupHotkey: function () {
+          return null;
+        },
+        debug: true,
+        polling: true,
+        hostname: "http://localhost:8010",
+        version: {},
+        sentry_dsn: null,
+        sentry_rate: "0.01",
+        sentry_environment: "development",
+        editor_keymap: {},
+        feature_flags: {},
+        feature_flags_default_value: false,
+        version_edition: "Community",
+        server_id: "dev",
+        collect_analytics: false,
+        local_files_document_root: null,
+        local_files_serving_enabled: true,
+        allowed_iframe_domains: [],
+        data_manager: { max_users_to_display: 100, list_filter_max_values: 100 },
+        flags: { allow_organization_webhooks: true, storage_persistence: false },
+        page_title: "Label Studio",
+      };
+      return {
+        html,
+        tags: [
+          {
+            tag: "script",
+            attrs: { id: "app-settings" },
+            children: `window.APP_SETTINGS = ${JSON.stringify(settings)};`,
+            injectTo: "head-prepend",
+          },
+        ],
+      };
+    },
+  };
+}
+
 const require = createRequire(import.meta.url);
 loadEnv("", path.resolve(__dirname, "../../../"), "");
 
@@ -52,7 +108,7 @@ const { postcssPrefixLsfClasses, postcssPreProcessGlobalBlocks } = require("./po
   postcssPreProcessGlobalBlocks: () => AcceptedPlugin;
 };
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
   const FRONTEND_HOSTNAME = process.env.FRONTEND_HOSTNAME || "http://localhost:8010";
   const DJANGO_HOSTNAME = process.env.DJANGO_HOSTNAME || "http://localhost:8080";
   const outDir = path.resolve(__dirname, "dist/apps/labelstudio");
@@ -208,6 +264,7 @@ export default defineConfig(({ mode }) => {
         svgrOptions: { ref: true, exportType: "named", namedExport: "ReactComponent", svgo: false },
       }),
       djangoManifestPlugin(outDir),
+      ...(command === "serve" ? [injectAppSettings()] : []),
     ],
     server: {
       port: 8010,

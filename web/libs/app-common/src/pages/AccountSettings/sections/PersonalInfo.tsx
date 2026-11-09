@@ -1,6 +1,6 @@
 import { type FormEventHandler, useCallback, useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
-import { Badge, Button, InputFile, ToastType, Typography, useToast, Avatar } from "@humansignal/ui";
+import { Badge, Button, InputFile, ToastType, Typography, useToast, Avatar, useAppTranslation } from "@humansignal/ui";
 import { getApiInstance } from "@humansignal/core";
 import { getAccountSettingsPersonalInfoExtras, useAccountSettingsExtension } from "../extensions";
 import { useReportProfileDirty } from "../ProfileDirtyContext";
@@ -22,20 +22,26 @@ const PROVIDER_DISPLAY_NAMES: Record<string, string> = {
 
 const isRequiredProfileValueMissing = (isRequired: boolean, value: string) => isRequired && value.trim().length === 0;
 
-const RequiredFieldLabel = ({ label }: { label: string }) => (
-  <span className={styles.requiredLabel}>
-    <span>{label}</span>
-    <Badge variant="neutral" shape="square" size="small">
-      Required
-    </Badge>
-  </span>
-);
+const RequiredFieldLabel = ({ label }: { label: string }) => {
+  const [t] = useAppTranslation();
+  return (
+    <span className={styles.requiredLabel}>
+      <span>{label}</span>
+      <Badge variant="neutral" shape="square" size="small">
+        {t("account.required")}
+      </Badge>
+    </span>
+  );
+};
 
-const RequiredFieldError = ({ id, label }: { id: string; label: string }) => (
-  <span id={id} className="text-negative-content" role="alert">
-    {label} is required.
-  </span>
-);
+const RequiredFieldError = ({ id, label }: { id: string; label: string }) => {
+  const [t] = useAppTranslation();
+  return (
+    <span id={id} className="text-negative-content" role="alert">
+      {t("account.requiredError", { label })}
+    </span>
+  );
+};
 
 function formatProvider(provider: string): string {
   return PROVIDER_DISPLAY_NAMES[provider] ?? provider.charAt(0).toUpperCase() + provider.slice(1);
@@ -68,6 +74,7 @@ const updateUserAvatarAtom = atomWithMutation(() => ({
 }));
 
 export const PersonalInfo = () => {
+  const [t] = useAppTranslation();
   const toast = useToast();
   const { user, refetch: refetchUser, isLoading: userInProgress, update: updateUser } = useAuth();
   const updateUserAvatar = useAtomValue(updateUserAvatarAtom);
@@ -169,7 +176,7 @@ export const PersonalInfo = () => {
           <Avatar user={user} isInProgress={userInProgress} size="xlarge" className={styles.userPic} />
           <div className={`${styles.sectionContent} ${styles.profilePhotoControls}`}>
             <Typography className={styles.profilePhotoLabel} variant="label" size="medium">
-              Profile Photo
+              {t("account.profilePhoto")}
             </Typography>
             <InputFile
               className={styles.profilePhotoUpload}
@@ -188,35 +195,35 @@ export const PersonalInfo = () => {
               size="medium"
               onClick={deleteUserAvatar}
             >
-              Delete Photo
+              {t("account.deletePhoto")}
             </Button>
           )}
         </div>
         <form onSubmit={userFormSubmitHandler} className={styles.sectionContent}>
           <div className={styles.formGrid}>
             <Input
-              label={isFieldRequired("first_name") ? <RequiredFieldLabel label="First Name" /> : "First Name"}
+              label={isFieldRequired("first_name") ? <RequiredFieldLabel label={t("account.firstName")} /> : t("account.firstName")}
               value={fname}
               onChange={(e: React.KeyboardEvent<HTMLInputElement>) => setFname(e.currentTarget.value)}
               name="first_name"
               aria-required={isFieldRequired("first_name")}
               aria-invalid={isFirstNameMissing || undefined}
               aria-describedby={isFirstNameMissing ? "first-name-error" : undefined}
-              footer={isFirstNameMissing ? <RequiredFieldError id="first-name-error" label="First Name" /> : undefined}
+              footer={isFirstNameMissing ? <RequiredFieldError id="first-name-error" label={t("account.firstName")} /> : undefined}
             />
             <Input
-              label={isFieldRequired("last_name") ? <RequiredFieldLabel label="Last Name" /> : "Last Name"}
+              label={isFieldRequired("last_name") ? <RequiredFieldLabel label={t("account.lastName")} /> : t("account.lastName")}
               value={lname}
               onChange={(e: React.KeyboardEvent<HTMLInputElement>) => setLname(e.currentTarget.value)}
               name="last_name"
               aria-required={isFieldRequired("last_name")}
               aria-invalid={isLastNameMissing || undefined}
               aria-describedby={isLastNameMissing ? "last-name-error" : undefined}
-              footer={isLastNameMissing ? <RequiredFieldError id="last-name-error" label="Last Name" /> : undefined}
+              footer={isLastNameMissing ? <RequiredFieldError id="last-name-error" label={t("account.lastName")} /> : undefined}
             />
-            <Input label="E-mail" type="email" readOnly={true} value={user?.email ?? ""} />
+            <Input label={t("account.email")} type="email" readOnly={true} value={user?.email ?? ""} />
             <Input
-              label={isFieldRequired("phone") ? <RequiredFieldLabel label="Phone" /> : "Phone"}
+              label={isFieldRequired("phone") ? <RequiredFieldLabel label={t("account.phone")} /> : t("account.phone")}
               type="phone"
               onChange={(e: React.KeyboardEvent<HTMLInputElement>) => setPhone(e.currentTarget.value)}
               value={phone}
@@ -224,13 +231,13 @@ export const PersonalInfo = () => {
               aria-required={isFieldRequired("phone")}
               aria-invalid={isPhoneMissing || undefined}
               aria-describedby={isPhoneMissing ? "phone-error" : undefined}
-              footer={isPhoneMissing ? <RequiredFieldError id="phone-error" label="Phone" /> : undefined}
+              footer={isPhoneMissing ? <RequiredFieldError id="phone-error" label={t("account.phone")} /> : undefined}
             />
             {user?.social_accounts?.map((account) => (
               <div className={`${styles.formGrid} ${styles.fullWidth}`} key={account.provider}>
-                <Input label="Connected Account" readOnly={true} value={formatProvider(account.provider)} />
+                <Input label={t("account.connectedAccount")} readOnly={true} value={formatProvider(account.provider)} />
                 <Input
-                  label="Connected Since"
+                  label={t("account.connectedSince")}
                   readOnly={true}
                   value={format(new Date(account.date_joined), "dd MMM yyyy")}
                 />
@@ -242,7 +249,7 @@ export const PersonalInfo = () => {
           </div>
           <div className={styles.formActions}>
             <Button className="w-[120px]" waiting={isInProgress}>
-              Save
+              {t("account.save")}
             </Button>
           </div>
         </form>

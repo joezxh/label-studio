@@ -592,9 +592,18 @@ GRAPHIQL = True
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
-USE_I18N = False
+USE_I18N = True
 USE_L10N = True
 USE_TZ = True
+
+LANGUAGES = [
+    ('en-us', 'English'),
+    ('zh-hans', 'Chinese'),
+]
+
+LOCALE_PATHS = [
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), 'locale'),
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
@@ -1066,6 +1075,14 @@ if ENABLE_CSP := get_bool_env('ENABLE_CSP', True):
         'https://*.g.double' + 'click.net',  # hacky way of suppressing codespell complaint
         'https://*.ingest.sentry.io',
     )
+    if FRONTEND_HMR:
+        # When frontend hot-module-reload is enabled, allow the Vite dev server
+        # origin for both the module client and its HMR websocket connection.
+        _hmr_origin = FRONTEND_HOSTNAME.split('://', 1)[-1].rstrip('/')
+        CSP_CONNECT_SRC = CSP_CONNECT_SRC + (
+            f'http://{_hmr_origin}',
+            f'ws://{_hmr_origin}',
+        )
     # Note that this will be overridden to real CSP for views that use the override_report_only_csp decorator
     CSP_REPORT_ONLY = get_bool_env('LS_CSP_REPORT_ONLY', True)
     CSP_REPORT_URI = get_env('LS_CSP_REPORT_URI', None)

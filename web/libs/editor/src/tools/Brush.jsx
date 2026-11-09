@@ -9,6 +9,7 @@ import { DrawingTool } from "../mixins/DrawingTool";
 import { Tool } from "../components/Toolbar/Tool";
 import { Range } from "../common/Range/Range";
 import { NodeViews } from "../components/Node/Node";
+import { useAppTranslation } from "@humansignal/ui";
 
 const MIN_SIZE = 1;
 const MAX_SIZE = 50;
@@ -28,9 +29,10 @@ const IconDot = ({ size }) => {
 };
 
 const ToolView = observer(({ item }) => {
+  const [t] = useAppTranslation();
   return (
     <Tool
-      label="Brush"
+      label={t("editor.tools.brush")}
       ariaLabel="brush-tool"
       active={item.selected}
       shortcut={item.shortcut}

@@ -4,17 +4,19 @@ import { types } from "mobx-state-tree";
 import { IconMoveTool } from "@humansignal/icons";
 import { Tool } from "../components/Toolbar/Tool";
 import { AnnotationMixin } from "../mixins/AnnotationMixin";
+import { useAppTranslation } from "@humansignal/ui";
 import ToolMixin from "../mixins/Tool";
 import { FF_LSDV_4930, isFF } from "../utils/feature-flags";
 import BaseTool from "./Base";
 
 const ToolView = observer(({ item }) => {
+  const [t] = useAppTranslation();
   return (
     <Tool
       ariaLabel="move-tool"
       active={item.selected}
       icon={<IconMoveTool />}
-      label="Move"
+      label={t("editor.tools.move")}
       shortcut={item.shortcut}
       extraShortcuts={item.extraShortcuts}
       onClick={() => {

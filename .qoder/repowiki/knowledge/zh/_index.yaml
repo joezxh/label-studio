@@ -1,0 +1,128 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: zh-CN
+branch: develop
+nodes_managed: true
+exported_at: "2026-11-09T09:25:26Z"
+modules:
+    "":
+        dir_name: Label Studio 多语言单体仓库（Monorepo）
+        title: Label Studio 多语言单体仓库（Monorepo）
+        scope:
+            - README.md
+            - CONTRIBUTING.md
+            - CODE_OF_CONDUCT.md
+            - SECURITY.md
+            - DESIGN.md
+            - Makefile
+            - pyproject.toml
+            - uv.lock
+            - .gitignore
+            - .pre-commit-config.yaml
+            - .pylintrc
+            - .black
+            - .codespellrc
+            - .dockerignore
+            - Dockerfile*
+            - docker-compose*.yml
+            - app.json
+            - azuredeploy*.json
+            - heroku.yml
+            - codecov.yml
+            - .gitattributes
+            - .pre-commit-dev.yaml
+            - .trufflehogignore
+            - Dockerfile
+            - Dockerfile.cloudrun
+            - Dockerfile.heroku
+            - Dockerfile.hgface
+            - LICENSE
+            - MANIFEST.in
+            - NOTICE
+            - azuredeploy.json
+            - azuredeploy.parameters.json
+            - docker-compose.minio.yml
+            - docker-compose.mysql.yml
+            - docker-compose.override.example.yml
+            - docker-compose.yml
+            - label-studio.code-workspace
+            - ls_repo_stderr.log
+            - ls_repo_stdout.log
+            - ls_stderr.log
+            - ls_stdout.log
+        source_files: []
+        children:
+            - backend
+            - ci_cd
+            - deployment
+            - docs_site
+            - frontend
+            - scripts_and_tools
+        depends_on: []
+        related_to: []
+    backend:
+        dir_name: Label Studio 后端服务（Django 应用）
+        title: Label Studio 后端服务（Django 应用）
+        scope:
+            - label_studio/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: deployment
+    ci_cd:
+        dir_name: CI_CD 与开发者容器配置
+        title: CI/CD 与开发者容器配置
+        scope:
+            - .github/
+            - .devcontainer/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: deployment
+            - path: docs_site
+            - path: scripts_and_tools
+    deployment:
+        dir_name: 容器部署与启动编排
+        title: 容器部署与启动编排
+        scope:
+            - deploy/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: backend
+            - path: ci_cd
+            - path: frontend
+    docs_site:
+        dir_name: Label Studio 文档站点（Hexo 多版本构建）
+        title: Label Studio 文档站点（Hexo 多版本构建）
+        scope:
+            - docs/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: ci_cd
+    frontend:
+        dir_name: Label Studio Web 前端工程（Vite + React 应用与共享库）
+        title: Label Studio Web 前端工程（Vite + React 应用与共享库）
+        scope:
+            - web/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: deployment
+    scripts_and_tools:
+        dir_name: 构建脚本与自定义工具集
+        title: 构建脚本与自定义工具集
+        scope:
+            - scripts/
+            - tools/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: ci_cd

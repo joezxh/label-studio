@@ -1,0 +1,12 @@
+schema_version: 1
+module_path: ci_cd
+title: CI/CD 与开发者容器配置
+scope:
+    - .github/
+    - .devcontainer/
+source_files: []
+depends_on: []
+related_to:
+    - path: deployment
+    - path: docs_site
+    - path: scripts_and_tools

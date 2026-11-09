@@ -43,6 +43,10 @@ services:
       - POSTGRE_HOST=db
       - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
       - JSON_LOG=1
+      # 外部 MinIO 受信任 S3 endpoint（方案 B）：配合 .env 的 S3_ENDPOINT，
+      # 让 Label Studio 接受 192.168.x 私有网段而不触发 SSRF 拦截。
+      # 存储表单里的 "Endpoint URL" 需留空，才会走到该受信任 env 端点。
+      - S3_ENDPOINT=${S3_ENDPOINT:-http://192.168.100.84:9011}
     #      - LOG_LEVEL=DEBUG
     volumes:
       - ./mydata:/label-studio/data:rw

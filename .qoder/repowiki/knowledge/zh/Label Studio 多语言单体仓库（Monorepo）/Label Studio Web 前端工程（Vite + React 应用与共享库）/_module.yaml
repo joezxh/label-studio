@@ -1,0 +1,9 @@
+schema_version: 1
+module_path: frontend
+title: Label Studio Web 前端工程（Vite + React 应用与共享库）
+scope:
+    - web/
+source_files: []
+depends_on: []
+related_to:
+    - path: deployment

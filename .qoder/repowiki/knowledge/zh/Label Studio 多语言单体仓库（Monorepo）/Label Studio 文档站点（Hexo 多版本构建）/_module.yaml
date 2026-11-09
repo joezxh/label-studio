@@ -1,0 +1,9 @@
+schema_version: 1
+module_path: docs_site
+title: Label Studio 文档站点（Hexo 多版本构建）
+scope:
+    - docs/
+source_files: []
+depends_on: []
+related_to:
+    - path: ci_cd

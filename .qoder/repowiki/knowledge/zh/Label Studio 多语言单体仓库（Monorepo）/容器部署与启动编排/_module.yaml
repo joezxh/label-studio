@@ -1,0 +1,11 @@
+schema_version: 1
+module_path: deployment
+title: 容器部署与启动编排
+scope:
+    - deploy/
+source_files: []
+depends_on: []
+related_to:
+    - path: backend
+    - path: ci_cd
+    - path: frontend

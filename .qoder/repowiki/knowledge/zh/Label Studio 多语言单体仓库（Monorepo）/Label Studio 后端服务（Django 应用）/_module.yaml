@@ -1,0 +1,9 @@
+schema_version: 1
+module_path: backend
+title: Label Studio 后端服务（Django 应用）
+scope:
+    - label_studio/
+source_files: []
+depends_on: []
+related_to:
+    - path: deployment

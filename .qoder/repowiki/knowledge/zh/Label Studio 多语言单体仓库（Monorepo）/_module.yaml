@@ -1,0 +1,48 @@
+schema_version: 1
+module_path: ""
+title: Label Studio 多语言单体仓库（Monorepo）
+scope:
+    - README.md
+    - CONTRIBUTING.md
+    - CODE_OF_CONDUCT.md
+    - SECURITY.md
+    - DESIGN.md
+    - Makefile
+    - pyproject.toml
+    - uv.lock
+    - .gitignore
+    - .pre-commit-config.yaml
+    - .pylintrc
+    - .black
+    - .codespellrc
+    - .dockerignore
+    - Dockerfile*
+    - docker-compose*.yml
+    - app.json
+    - azuredeploy*.json
+    - heroku.yml
+    - codecov.yml
+    - .gitattributes
+    - .pre-commit-dev.yaml
+    - .trufflehogignore
+    - Dockerfile
+    - Dockerfile.cloudrun
+    - Dockerfile.heroku
+    - Dockerfile.hgface
+    - LICENSE
+    - MANIFEST.in
+    - NOTICE
+    - azuredeploy.json
+    - azuredeploy.parameters.json
+    - docker-compose.minio.yml
+    - docker-compose.mysql.yml
+    - docker-compose.override.example.yml
+    - docker-compose.yml
+    - label-studio.code-workspace
+    - ls_repo_stderr.log
+    - ls_repo_stdout.log
+    - ls_stderr.log
+    - ls_stdout.log
+source_files: []
+depends_on: []
+related_to: []
